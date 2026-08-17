@@ -1,0 +1,28 @@
+# .gitignore for combined .NET and Node projects
+
+# .NET
+bin/
+obj/
+*.user
+*.vs/
+.vs/
+.vscode/
+*.db
+*.log
+
+# EF Core Migrations (optional)
+Migrations/
+
+# Node
+node_modules/
+dist/
+.env
+.env.*
+
+# macOS
+.DS_Store
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

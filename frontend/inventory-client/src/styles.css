@@ -1,0 +1,35 @@
+/* Simple responsive layout using CSS Grid / Flexbox. Works down to ~375px */
+:root{
+  --sidebar-width: 220px;
+  --gap: 16px;
+  --bg: #f7f8fb;
+  --accent: #2b6cb0;
+}
+
+*{box-sizing:border-box}
+html,body,#root{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial}
+
+.app-root{display:grid;grid-template-columns:var(--sidebar-width) 1fr;gap:var(--gap);height:100vh;background:var(--bg)}
+.sidebar{background:#fff;padding:20px;border-right:1px solid #eee}
+.sidebar .brand{margin:0 0 12px 0}
+.sidebar ul{list-style:none;padding:0;margin:0}
+.sidebar li{margin:8px 0}
+.sidebar a{color:var(--accent);text-decoration:none}
+
+.content{display:flex;flex-direction:column;height:100vh}
+.topbar{background:#fff;padding:12px 20px;border-bottom:1px solid #eee}
+.page{padding:20px;overflow:auto}
+
+/* Responsive adjustments */
+@media (max-width: 800px){
+  .app-root{grid-template-columns: 1fr;}
+  .sidebar{display:flex;flex-direction:row;align-items:center;justify-content:space-between}
+  .sidebar ul{display:flex;gap:12px}
+  .sidebar li{margin:0}
+}
+
+@media (max-width: 420px){
+  .sidebar{padding:10px}
+  .topbar{padding:8px}
+  .page{padding:12px}
+}
