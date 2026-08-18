@@ -14,7 +14,11 @@ if (string.IsNullOrWhiteSpace(connectionString))
 }
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+    });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -22,16 +26,21 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
 
-// CORS - allow frontend dev server. Add deployed frontend URL to the allowed list later.
-var frontendDevUrls = new[] { "http://localhost:5173", "http://localhost:5174", "http://localhost:5175" };
+// CORS - allow frontend dev server and deployed frontend origin.
+var allowedOrigins = new[] 
+{ 
+    "http://localhost:5173", 
+    "http://localhost:5174", 
+    "http://localhost:5175",
+    "https://your-frontend-placeholder.com" // Placeholder for deployed frontend
+};
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("FrontendDevPolicy", policy =>
     {
-        policy.WithOrigins(frontendDevUrls)
+        policy.WithOrigins(allowedOrigins)
               .AllowAnyHeader()
               .AllowAnyMethod();
-        // TODO: add deployed frontend origin (e.g. https://app.example.com) when ready
     });
 });
 
@@ -44,8 +53,12 @@ app.UseMiddleware<ExceptionMiddleware>();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.UseHttpsRedirection();
 app.UseCors("FrontendDevPolicy");
+
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 app.UseAuthorization();
 app.MapControllers();
 

@@ -212,8 +212,21 @@ namespace InventoryManagement.Api.Controllers
                 return NotFound(new { message = $"Product with id {id} was not found." });
             }
 
-            _context.Products.Remove(product);
-            await _context.SaveChangesAsync();
+            var hasTransactions = await _context.StockTransactions.AnyAsync(t => t.ProductId == id);
+            if (hasTransactions)
+            {
+                return BadRequest(new { message = "Cannot delete product because it has associated stock transactions." });
+            }
+
+            try
+            {
+                _context.Products.Remove(product);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                return BadRequest(new { message = "Cannot delete product because it is referenced by other records." });
+            }
 
             return NoContent();
         }

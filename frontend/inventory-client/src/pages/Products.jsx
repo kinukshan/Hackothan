@@ -46,7 +46,7 @@ export default function Products() {
       const created = await createProduct(data)
       setProducts(p => [created, ...p])
       setShowModal(false)
-    } catch (e) { setError(e.message || 'Failed to create') }
+    } catch (e) { setError(e.response?.data?.message || e.message || 'Failed to create') }
   }
 
   async function handleUpdate(data) {
@@ -54,7 +54,7 @@ export default function Products() {
       const updated = await updateProduct(editing.id, data)
       setProducts(p => p.map(x => x.id === updated.id ? updated : x))
       setShowModal(false); setEditing(null)
-    } catch (e) { setError(e.message || 'Failed to update') }
+    } catch (e) { setError(e.response?.data?.message || e.message || 'Failed to update') }
   }
 
   function openEdit(p) { setEditing(p); setShowModal(true) }
@@ -66,7 +66,10 @@ export default function Products() {
       await deleteProduct(toDelete.id)
       setProducts(p => p.filter(x => x.id !== toDelete.id))
       setConfirmOpen(false); setToDelete(null)
-    } catch (e) { setError(e.message || 'Failed to delete') }
+    } catch (e) {
+      setError(e.response?.data?.message || e.message || 'Failed to delete')
+      setConfirmOpen(false); setToDelete(null)
+    }
   }
 
   const catById = useMemo(() => Object.fromEntries((categories || []).map(c => [c.id, c])), [categories])

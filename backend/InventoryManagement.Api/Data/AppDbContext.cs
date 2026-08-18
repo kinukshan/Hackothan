@@ -31,6 +31,12 @@ namespace InventoryManagement.Api.Data
                 .HasForeignKey(p => p.CategoryId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<StockTransaction>()
+                .HasOne(t => t.Product)
+                .WithMany()
+                .HasForeignKey(t => t.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             modelBuilder.Entity<Category>().HasData(
                 new Category { Id = 1, Name = "Electronics", Description = "Gadgets and digital accessories.", CreatedAt = new DateTime(2025, 1, 5, 9, 0, 0, DateTimeKind.Utc) },
                 new Category { Id = 2, Name = "Office Supplies", Description = "Desk and productivity essentials.", CreatedAt = new DateTime(2025, 1, 6, 9, 0, 0, DateTimeKind.Utc) },
