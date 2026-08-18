@@ -7,7 +7,7 @@
       "applicationUrl": "https://localhost:5001;http://localhost:5000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "ConnectionStrings__DefaultConnection": "Host=localhost;Port=5432;Database=inventory_db;Username=inventory_user;Password=YOUR_PASSWORD_HERE"
+        "ConnectionStrings__DefaultConnection": "Host=localhost;Port=5432;Database=inventory_db;Username=postgres;Password=pavesh2003"
       }
     }
   }

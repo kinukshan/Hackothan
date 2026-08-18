@@ -17,6 +17,22 @@ let nextProductId = 4
 
 const fakeDelay = (v, ms = 300) => new Promise((res) => setTimeout(() => res(v), ms))
 
+// Normalize backend response to use 'quantity' field name for consistency with frontend
+const normalizeProductFromBackend = (p) => ({
+  ...p,
+  quantity: p.quantityInStock ?? p.quantity
+})
+
+// Prepare payload for backend - use 'quantityInStock' field name
+const prepareProductForBackend = (p) => ({
+  name: p.name,
+  sku: p.sku,
+  categoryId: Number(p.categoryId),
+  price: Number(p.price),
+  quantityInStock: Number(p.quantity),
+  reorderLevel: Number(p.reorderLevel)
+})
+
 export async function getProducts({ search, categoryId, sortBy, sortDir } = {}) {
   if (USE_MOCK) {
     let list = [...mockProducts]
@@ -44,7 +60,7 @@ export async function getProducts({ search, categoryId, sortBy, sortDir } = {}) 
   if (sortBy) params.sortBy = sortBy
   if (sortDir) params.sortDir = sortDir
   const resp = await client.get('/api/products', { params })
-  return resp.data
+  return (resp.data || []).map(normalizeProductFromBackend)
 }
 
 export async function createProduct(payload) {
@@ -53,8 +69,8 @@ export async function createProduct(payload) {
     mockProducts.push(rec)
     return fakeDelay(rec)
   }
-  const resp = await client.post('/api/products', payload)
-  return resp.data
+  const resp = await client.post('/api/products', prepareProductForBackend(payload))
+  return normalizeProductFromBackend(resp.data)
 }
 
 export async function updateProduct(id, payload) {
@@ -64,8 +80,8 @@ export async function updateProduct(id, payload) {
     mockProducts[idx] = { ...mockProducts[idx], ...payload }
     return fakeDelay(mockProducts[idx])
   }
-  const resp = await client.put(`/api/products/${id}`, payload)
-  return resp.data
+  const resp = await client.put(`/api/products/${id}`, prepareProductForBackend(payload))
+  return normalizeProductFromBackend(resp.data)
 }
 
 export async function deleteProduct(id) {
@@ -83,5 +99,5 @@ export async function getProductById(id) {
     return fakeDelay(p)
   }
   const resp = await client.get(`/api/products/${id}`)
-  return resp.data
+  return normalizeProductFromBackend(resp.data)
 }
