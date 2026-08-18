@@ -23,12 +23,12 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
 
 // CORS - allow frontend dev server. Add deployed frontend URL to the allowed list later.
-var frontendDevUrl = "http://localhost:5173";
+var frontendDevUrls = new[] { "http://localhost:5173", "http://localhost:5174", "http://localhost:5175" };
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("FrontendDevPolicy", policy =>
     {
-        policy.WithOrigins(frontendDevUrl)
+        policy.WithOrigins(frontendDevUrls)
               .AllowAnyHeader()
               .AllowAnyMethod();
         // TODO: add deployed frontend origin (e.g. https://app.example.com) when ready
@@ -41,11 +41,8 @@ var app = builder.Build();
 app.UseMiddleware<ExceptionMiddleware>();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 app.UseCors("FrontendDevPolicy");
