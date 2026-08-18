@@ -1,8 +1,3 @@
-<<<<<<< Updated upstream
-// Placeholder for product-related API calls
-// Example export:
-// export async function fetchProducts() { return client.get('/api/products') }
-=======
 import client from './client'
 import { USE_MOCK } from './config'
 
@@ -25,7 +20,7 @@ const fakeDelay = (v, ms = 300) => new Promise((res) => setTimeout(() => res(v),
 // Normalize backend response to use 'quantity' field name for consistency with frontend
 const normalizeProductFromBackend = (p) => ({
   ...p,
-  quantity: p.quantityInStock || p.quantity
+  quantity: p.quantityInStock ?? p.quantity
 })
 
 // Prepare payload for backend - use 'quantityInStock' field name
@@ -106,4 +101,3 @@ export async function getProductById(id) {
   const resp = await client.get(`/api/products/${id}`)
   return normalizeProductFromBackend(resp.data)
 }
->>>>>>> Stashed changes
